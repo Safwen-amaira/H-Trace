@@ -17,47 +17,49 @@ export default function Login() {
   }
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-black">
-      {/* 3D Background */}
+    <div className="relative h-screen w-screen overflow-hidden bg-dark-950">
       <div className="absolute inset-0 z-0">
         <Canvas>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} />
+          <ambientLight intensity={0.3} />
+          <pointLight position={[10, 10, 10]} intensity={0.8} color="#e6b422" />
           <Sphere args={[1, 64, 64]}>
-            <meshStandardMaterial wireframe color="#00ff88" />
+            <meshStandardMaterial wireframe color="#e6b422" emissive="#e6b422" emissiveIntensity={0.2} />
           </Sphere>
-          <OrbitControls enableZoom={false} autoRotate />
+          <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.4} />
         </Canvas>
       </div>
 
-      {/* Login Form */}
-      <div className="relative z-10 flex items-center justify-center h-full">
-        <form onSubmit={handleSubmit} className="bg-gray-900/80 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-96 border border-gray-700">
-          <h1 className="text-3xl font-bold text-green-400 mb-6 text-center">H-Trace</h1>
-          <div className="mb-4">
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 bg-gray-800 rounded-lg border border-gray-600 focus:outline-none focus:border-green-400 text-white"
-              required
-            />
-          </div>
-          <div className="mb-6">
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 bg-gray-800 rounded-lg border border-gray-600 focus:outline-none focus:border-green-400 text-white"
-              required
-            />
-          </div>
-          <button type="submit" className="w-full py-3 bg-green-500 hover:bg-green-600 rounded-lg font-bold transition">
-            Login
-          </button>
-        </form>
+      <div className="relative z-10 flex items-center justify-center h-full backdrop-blur-sm">
+        <div className="bg-dark-900/80 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-96 border border-gold-500/30">
+          <h1 className="text-4xl font-bold text-gold-400 mb-2 text-center">H‑Trace</h1>
+          <p className="text-gold-600 text-center mb-6 text-sm">Tunisian Threat Intelligence</p>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-3 bg-dark-850 border border-gold-600/30 rounded-lg focus:outline-none focus:border-gold-400 text-gold-300 placeholder-gold-700 transition"
+                required
+              />
+            </div>
+            <div className="mb-6">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-3 bg-dark-850 border border-gold-600/30 rounded-lg focus:outline-none focus:border-gold-400 text-gold-300 placeholder-gold-700 transition"
+                required
+              />
+            </div>
+            <button type="submit" className="w-full py-3 bg-gold-500 hover:bg-gold-400 text-dark-950 font-bold rounded-lg transition duration-200">
+              Access Platform
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   )

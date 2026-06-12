@@ -1,4 +1,4 @@
-from fastapi import Request, Depends, HTTPException
+from fastapi import Request, Depends
 from fastapi.routing import APIRouter
 import httpx
 from .config import (

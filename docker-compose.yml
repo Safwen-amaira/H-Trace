@@ -1,0 +1,79 @@
+services:
+  postgres_users:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: htrace
+      POSTGRES_PASSWORD: htrace_secret
+      POSTGRES_DB: users
+    volumes:
+      - pg_users_data:/var/lib/postgresql/data
+    networks:
+      - htrace
+
+  postgres_threats:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: htrace
+      POSTGRES_PASSWORD: htrace_secret
+      POSTGRES_DB: threats
+    volumes:
+      - pg_threats_data:/var/lib/postgresql/data
+    networks:
+      - htrace
+
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - htrace
+
+  redis:
+    image: redis:7
+    networks:
+      - htrace
+
+  auth_service:
+    image: alpine
+    command: tail -f /dev/null
+    networks:
+      - htrace
+
+  threat_intel_service:
+    image: alpine
+    command: tail -f /dev/null
+    networks:
+      - htrace
+
+  source_connector_service:
+    image: alpine
+    command: tail -f /dev/null
+    networks:
+      - htrace
+
+  api_gateway:
+    image: alpine
+    command: tail -f /dev/null
+    ports:
+      - "8000:8000"
+    networks:
+      - htrace
+
+  frontend:
+    image: alpine
+    command: tail -f /dev/null
+    ports:
+      - "3000:3000"
+    networks:
+      - htrace
+
+networks:
+  htrace:
+
+volumes:
+  pg_users_data:
+  pg_threats_data:
+  es_data:

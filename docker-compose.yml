@@ -55,13 +55,20 @@ services:
       - elasticsearch
     networks:
       - htrace
-
   source_connector_service:
-    image: alpine
-    command: tail -f /dev/null
+    build: ./backend/source_connector_service
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8003
+    environment:
+      THREAT_SOURCES: '{"openioc":"https://openioc.example.com/api","phishtank":"https://phishtank.example.com/api"}'
+      THREAT_INTEL_SERVICE_URL: http://threat_intel_service:8002
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "8003:8003"
+    depends_on:
+      - threat_intel_service
+      - redis
     networks:
       - htrace
-
 
   api_gateway:
     build: ./backend/api_gateway
@@ -87,7 +94,7 @@ services:
     networks:
       - htrace
 
-      
+
 networks:
   htrace:
 

@@ -2,10 +2,12 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 from .models import UserRole, PlanType
 
+
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
     full_name: Optional[str] = None
+
 
 class UserOut(BaseModel):
     id: int
@@ -17,6 +19,7 @@ class UserOut(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class Token(BaseModel):
     access_token: str

@@ -45,7 +45,11 @@ def login(
         minutes=ACCESS_TOKEN_EXPIRE_MINUTES
     )
     access_token = auth.create_access_token(
-        data={"sub": user.email, "role": user.role.value},
+        data={
+            "sub": user.email,
+            "role": user.role.value,
+            "plan": user.plan.value
+        },
         expires_delta=access_token_expires,
     )
     return {"access_token": access_token, "token_type": "bearer"}

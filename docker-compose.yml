@@ -76,15 +76,19 @@ services:
     environment:
       AUTH_SERVICE_URL: http://auth_service:8001
       THREAT_INTEL_SERVICE_URL: http://threat_intel_service:8002
-      SECRET_KEY: change_me_to_a_random_string   # must match the auth service's key
+      SOURCE_CONNECTOR_SERVICE_URL: http://source_connector_service:8003
+      SECRET_KEY: change_me_to_a_random_string
+      REDIS_URL: redis://redis:6379
     ports:
       - "8000:8000"
     depends_on:
       - auth_service
       - threat_intel_service
+      - source_connector_service
+      - redis
     networks:
       - htrace
-
+      
   frontend:
     build: ./frontend
     ports:

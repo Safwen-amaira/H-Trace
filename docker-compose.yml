@@ -62,13 +62,22 @@ services:
     networks:
       - htrace
 
+
   api_gateway:
-    image: alpine
-    command: tail -f /dev/null
+    build: ./backend/api_gateway
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    environment:
+      AUTH_SERVICE_URL: http://auth_service:8001
+      THREAT_INTEL_SERVICE_URL: http://threat_intel_service:8002
+      SECRET_KEY: change_me_to_a_random_string   # must match the auth service's key
     ports:
       - "8000:8000"
+    depends_on:
+      - auth_service
+      - threat_intel_service
     networks:
       - htrace
+
 
   frontend:
     image: alpine

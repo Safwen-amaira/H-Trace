@@ -11,7 +11,6 @@ export default function AuthContextProvider({ children }) {
     const formData = new URLSearchParams()
     formData.append('username', email)
     formData.append('password', password)
-    // Vite proxy will forward /api/auth/login -> http://api_gateway:8000/auth/login
     const res = await axios.post('/api/auth/login', formData)
     const { access_token } = res.data
     localStorage.setItem('token', access_token)
@@ -27,7 +26,10 @@ export default function AuthContextProvider({ children }) {
   useEffect(() => {
     if (token) {
       axios.get('/api/users/me', { headers: { Authorization: `Bearer ${token}` } })
-        .then(res => setUser(res.data))
+        .then(res => {
+          // user object now has plan field
+          setUser(res.data)
+        })
         .catch(() => logout())
     }
   }, [token])

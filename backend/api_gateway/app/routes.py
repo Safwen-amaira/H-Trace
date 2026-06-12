@@ -37,12 +37,11 @@ async def proxy_auth(request: Request, path: str):
 
 
 @router.get("/users/me")
-async def get_current_user_info(user=Depends(get_current_user)):
+async def get_current_user_info(request: Request):
+    """Transmet directement l'appel à l'auth service."""
     async with httpx.AsyncClient() as client:
-        resp = await client.get(
-            f"{AUTH_SERVICE_URL}/users/me",
-            headers={"X-User-Email": user["email"]}
-        )
+        headers = {k: v for k, v in request.headers.items() if k != "host"}
+        resp = await client.get(f"{AUTH_SERVICE_URL}/users/me", headers=headers)
         if resp.headers.get("content-type") == "application/json":
             return resp.json()
         return resp.text

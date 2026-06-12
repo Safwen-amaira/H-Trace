@@ -1,6 +1,12 @@
 import os
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://htrace:htrace_secret@postgres_users/users")
-SECRET_KEY = os.getenv("SECRET_KEY", "super-secret-key-change-in-production")
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql://htrace:htrace_secret@postgres_users/users"
+)
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "super-secret-key-change-in-production"
+)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30

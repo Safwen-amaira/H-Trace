@@ -24,3 +24,11 @@ class UserOut(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class PlanUpdate(BaseModel):
+    plan: PlanType
+
+
+class RoleUpdate(BaseModel):
+    role: UserRole

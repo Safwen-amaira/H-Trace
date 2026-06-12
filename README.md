@@ -1,36 +1,87 @@
-<center><h1>H-Trace </h1>  </center>
-<div align="center">
-AI‑Driven Threat Intelligence Platform for Tunisian Cyberspace
+# 🛡️ H-Trace
 
-https://github.com/Safwen-amaira/H-Trace/actions/workflows/ci.yml/badge.svg
-https://img.shields.io/badge/License-CC%2520BY--NC--ND%25204.0-red.svg
-https://img.shields.io/badge/Made%2520in-Tunisia-red.svg
+<div align="center">
+
+**AI-Driven Threat Intelligence Platform for Tunisian Cyberspace**
+
+[![CI](https://github.com/Safwen-amaira/H-Trace/actions/workflows/ci.yml/badge.svg)](https://github.com/Safwen-amaira/H-Trace/actions/workflows/ci.yml)
+![License](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-red.svg)
+![Made in Tunisia](https://img.shields.io/badge/Made%20in-Tunisia-red.svg)
 
 </div>
-🌍 Overview
-H‑Trace is a specialised threat intelligence sharing platform focused on threats targeting Tunisia’s digital ecosystem.
-It combines a MISP‑like collaborative approach with AI‑driven analysis, real‑world threat feeds, and fine‑grained access control based on subscription plans.
 
-Built from the ground up without external frameworks like MISP, H‑Trace is a fully modular microservice platform designed for Tunisian SOC teams, CERT‑TN partners, and cybersecurity researchers.
+---
 
-✨ Key Features
-🤖 AI‑Driven – NLP models (upcoming) for Arabic/French threat reports, automatic IOC extraction, and threat classification.
+## 🌍 Overview
 
-🇹🇳 Tunisia Focus – Monitors .tn domains, Tunisian IP ranges, and local threat actors.
+**H-Trace** is a specialized threat intelligence sharing platform focused on protecting Tunisia’s digital ecosystem.
 
-📡 Real Threat Feeds – Integrates AbuseIPDB, URLhaus, and PhishTank (configurable via .env).
+It combines a **MISP-like collaborative intelligence model** with **AI-driven analysis**, real-world threat feeds, and **fine-grained multi-tenant access control**.
 
-👥 Multi‑Tenant Plans – Free, Pro, and Enterprise tiers with rate limiting and source gating.
+It is built from scratch as a modular microservice platform for:
 
-🛡️ Role‑Based Access – Admin, Hanicar Team, and regular users.
+- 🇹🇳 Tunisian SOC teams  
+- 🛡️ CERT-TN partners  
+- 🔬 Cybersecurity researchers  
+- 🧠 Threat intelligence analysts  
 
-🎛️ Admin Dashboard – Manage users, change plans, and view platform statistics.
+---
 
-💎 Modern UI – React + Vite + Three.js interactive globe, Tailwind CSS, and responsive design.
+## ✨ Key Features
 
-🐳 Microservices Architecture – Auth, Threat Intel, Source Connector, API Gateway, all Dockerised.
+### 🤖 AI-Driven Intelligence
+- IOC extraction (future NLP support for Arabic & French)
+- Automatic threat classification
+- Smart enrichment pipeline
 
-🔒 Security First – JWT authentication, plan enforcement, Redis‑backed rate limiting, CORS, and secret management.
+### 🇹🇳 Tunisia-Centric Monitoring
+- `.tn` domain tracking
+- Tunisian IP ranges
+- Local threat actor focus
+
+### 📡 Real Threat Feeds
+- AbuseIPDB  
+- URLhaus  
+- PhishTank  
+(Configurable via `.env`)
+
+### 👥 Multi-Tenant Subscription System
+- Free / Pro / Enterprise plans
+- Feature gating per plan
+- Rate limiting per tier
+
+### 🛡️ Role-Based Access Control
+- Admin (full system control)
+- Hanicar Team (developer tools)
+- Users (plan-based access)
+
+### 🎛️ Admin Dashboard
+- User & subscription management
+- System analytics
+- Threat feed control
+
+### 💎 Modern UI
+- React + Vite frontend
+- TailwindCSS
+- Three.js interactive threat globe
+
+### 🧱 Microservices Architecture
+- API Gateway (FastAPI)
+- Auth Service
+- Threat Intelligence Service
+- Source Connector Service
+- Fully Dockerized ecosystem
+
+### 🔒 Security First
+- JWT authentication
+- Redis rate limiting
+- Plan enforcement at gateway
+- Secure secrets management
+- CORS protection
+
+---
+
+## 🏗️ Architecture
 
 🧱 Architecture
 ```bash

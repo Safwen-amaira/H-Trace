@@ -37,8 +37,8 @@ services:
       - htrace
 
   auth_service:
-    image: alpine
-    command: tail -f /dev/null
+    build: ./backend/auth_service
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8001
     networks:
       - htrace
 

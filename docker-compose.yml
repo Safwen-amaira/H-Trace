@@ -39,6 +39,13 @@ services:
   auth_service:
     build: ./backend/auth_service
     command: uvicorn app.main:app --host 0.0.0.0 --port 8001
+    environment:
+      DATABASE_URL: postgresql://htrace:htrace_secret@postgres_users/users
+      SECRET_KEY: change_me_to_a_random_string   # must match the gateway's SECRET_KEY
+    ports:
+      - "8001:8001"   # optional, for direct testing
+    depends_on:
+      - postgres_users
     networks:
       - htrace
 

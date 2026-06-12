@@ -1,7 +1,7 @@
 {
   "name": "h-trace-frontend",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,13 +14,10 @@
     "react-router-dom": "^6.21.3",
     "axios": "^1.6.5",
     "framer-motion": "^10.18.0",
-    "@react-three/fiber": "^8.15.12",
-    "@react-three/drei": "^9.92.7",
-    "three": "^0.160.0"
+    "lucide-react": "^0.309.0",
+    "recharts": "^2.10.3"
   },
   "devDependencies": {
-    "@types/react": "^18.2.48",
-    "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
     "vite": "^5.0.12",
     "tailwindcss": "^3.4.1",

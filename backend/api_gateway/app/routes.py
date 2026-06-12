@@ -4,7 +4,8 @@ import httpx
 from .config import (
     AUTH_SERVICE_URL,
     THREAT_INTEL_SERVICE_URL,
-    SOURCE_CONNECTOR_SERVICE_URL
+    SOURCE_CONNECTOR_SERVICE_URL,
+    PLAN_SOURCES
 )
 from .dependencies import get_current_user
 from .rate_limiter import check_rate_limit
@@ -47,6 +48,8 @@ async def proxy_threats(
     # Apply rate limiting
     await check_rate_limit(request, user)
 
+    plan = user.get("plan", "free")
+
     async with httpx.AsyncClient() as client:
         body = await request.body()
         headers = {
@@ -54,16 +57,28 @@ async def proxy_threats(
         }
         headers["X-User-Email"] = user["email"]
         headers["X-User-Role"] = user["role"]
-        headers["X-User-Plan"] = user.get("plan", "free")
+        headers["X-User-Plan"] = plan
 
         # Special handling for sources endpoint
         if path == "sources":
             url = f"{SOURCE_CONNECTOR_SERVICE_URL}/sources"
             resp = await client.get(
-                url, params={"plan": user.get("plan", "free")}
+                url, params={"plan": plan}
             )
             return resp.json()
 
+        # For IOC listing, filter by plan sources
+        if request.method == "GET" and path == "iocs":
+            allowed = PLAN_SOURCES.get(plan, [])
+            if allowed:  # if list is not empty, add source filter
+                # Get original query params and add source
+                query_params = dict(request.query_params)
+                query_params["source"] = ",".join(allowed)
+                url = f"{THREAT_INTEL_SERVICE_URL}/iocs"
+                resp = await client.get(url, params=query_params)
+                return resp.json()
+
+        # Default forward
         url = f"{THREAT_INTEL_SERVICE_URL}/{path}"
         resp = await client.request(
             method=request.method,
@@ -79,3 +94,4 @@ async def proxy_threats(
 @router.get("/health")
 def health():
     return {"status": "ok", "gateway": "running"}
+    

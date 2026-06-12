@@ -1,8 +1,13 @@
-from fastapi import Request, Depends
+from fastapi import Request, Depends, HTTPException
 from fastapi.routing import APIRouter
 import httpx
-from .config import AUTH_SERVICE_URL, THREAT_INTEL_SERVICE_URL
+from .config import (
+    AUTH_SERVICE_URL,
+    THREAT_INTEL_SERVICE_URL,
+    SOURCE_CONNECTOR_SERVICE_URL
+)
 from .dependencies import get_current_user
+from .rate_limiter import check_rate_limit
 
 
 router = APIRouter()
@@ -39,6 +44,9 @@ async def proxy_threats(
     path: str,
     user=Depends(get_current_user)
 ):
+    # Apply rate limiting
+    await check_rate_limit(request, user)
+
     async with httpx.AsyncClient() as client:
         body = await request.body()
         headers = {
@@ -46,6 +54,16 @@ async def proxy_threats(
         }
         headers["X-User-Email"] = user["email"]
         headers["X-User-Role"] = user["role"]
+        headers["X-User-Plan"] = user.get("plan", "free")
+
+        # Special handling for sources endpoint
+        if path == "sources":
+            url = f"{SOURCE_CONNECTOR_SERVICE_URL}/sources"
+            resp = await client.get(
+                url, params={"plan": user.get("plan", "free")}
+            )
+            return resp.json()
+
         url = f"{THREAT_INTEL_SERVICE_URL}/{path}"
         resp = await client.request(
             method=request.method,

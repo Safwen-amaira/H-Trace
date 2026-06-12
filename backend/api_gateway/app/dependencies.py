@@ -17,8 +17,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("sub")
         role = payload.get("role")
+        plan = payload.get("plan", "free")
         if email is None:
             raise HTTPException(status_code=401)
-        return {"email": email, "role": role}
+        return {"email": email, "role": role, "plan": plan}
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")

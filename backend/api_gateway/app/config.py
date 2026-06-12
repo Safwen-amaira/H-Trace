@@ -17,3 +17,12 @@ SECRET_KEY = os.getenv(
     "super-secret-key-change-in-production"
 )
 ALGORITHM = "HS256"
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379")
+
+# Rate limits: requests per minute
+RATE_LIMITS = {
+    "free": 10,
+    "pro": 60,
+    "enterprise": 600
+}

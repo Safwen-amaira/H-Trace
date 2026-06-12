@@ -78,15 +78,16 @@ services:
     networks:
       - htrace
 
-
   frontend:
-    image: alpine
-    command: tail -f /dev/null
+    build: ./frontend
     ports:
       - "3000:3000"
+    depends_on:
+      - api_gateway
     networks:
       - htrace
 
+      
 networks:
   htrace:
 

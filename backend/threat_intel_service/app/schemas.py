@@ -3,6 +3,7 @@ from typing import Optional
 from datetime import datetime
 from .models import IOCType, ThreatLevel
 
+
 class IOCBase(BaseModel):
     type: IOCType
     value: str
@@ -12,8 +13,10 @@ class IOCBase(BaseModel):
     description: Optional[str] = None
     confidence: Optional[float] = 50.0
 
+
 class IOCCreate(IOCBase):
     pass
+
 
 class IOCOut(IOCBase):
     id: int

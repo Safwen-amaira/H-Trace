@@ -1,105 +1,136 @@
 import { useAuth } from '../context/AuthContext'
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Sphere } from '@react-three/drei'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { Link } from 'react-router-dom'
-import { Shield, Activity, CreditCard } from 'lucide-react'
+import { Activity, Shield, AlertTriangle, Zap, ArrowUpRight } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export default function Dashboard() {
   const { user, token } = useAuth()
   const [iocs, setIocs] = useState([])
-  const [chartData, setChartData] = useState([])
+  const [stats, setStats] = useState({ total: 0, high: 0, medium: 0, low: 0 })
 
   useEffect(() => {
     axios.get('/api/threats/iocs', { headers: { Authorization: `Bearer ${token}` } })
       .then(res => {
         const data = res.data || []
-        setIocs(data.slice(0, 5))
-        const counts = {}
+        setIocs(data.slice(0, 10))
+        const counts = { total: data.length, high: 0, medium: 0, low: 0 }
         data.forEach(i => {
-          counts[i.type] = (counts[i.type] || 0) + 1
+          if (i.threat_level === 'high' || i.threat_level === 'critical') counts.high++
+          else if (i.threat_level === 'medium') counts.medium++
+          else counts.low++
         })
-        setChartData(Object.entries(counts).map(([type, count]) => ({ type, count })))
+        setStats(counts)
       })
       .catch(console.error)
   }, [token])
 
+  const chartData = [
+    { name: 'High/Crit', value: stats.high },
+    { name: 'Medium', value: stats.medium },
+    { name: 'Low', value: stats.low }
+  ]
+
   return (
-    <div className="h-screen bg-dark-950 text-gold-300 flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-dark-900 p-6 border-r border-gold-600/20 flex flex-col">
-        <h1 className="text-2xl font-bold text-gold-400 mb-8">H‑Trace</h1>
-        <nav className="space-y-1 flex-1">
-          <Link to="/dashboard" className="flex items-center gap-3 py-2 px-3 rounded bg-dark-800 text-gold-400 border border-gold-500/20">
-            <Activity size={18} /> Dashboard
-          </Link>
-          <Link to="/settings" className="flex items-center gap-3 py-2 px-3 rounded hover:bg-dark-800 transition">
-            <CreditCard size={18} /> Plan & Billing
-          </Link>
-          {user?.role === 'admin' && (
-            <Link to="/admin" className="flex items-center gap-3 py-2 px-3 rounded hover:bg-dark-800 transition">
-              <Shield size={18} /> Admin Panel
-            </Link>
-          )}
-        </nav>
-        <div className="pt-4 border-t border-gold-600/20">
-          <p className="text-sm text-gold-500">{user?.email}</p>
-          <p className="text-xs text-gold-400 capitalize bg-dark-800 px-2 py-0.5 rounded inline-block mt-1">{user?.plan} plan</p>
-        </div>
-      </aside>
-
-      {/* Main */}
-      <main className="flex-1 p-8 overflow-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-gold-300">Threat Overview</h2>
-          <Link to="/settings" className="bg-gold-500 hover:bg-gold-400 text-dark-950 font-bold px-4 py-2 rounded-lg transition">
-            Upgrade Plan
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <div className="h-64 rounded-xl border border-gold-600/20 overflow-hidden bg-dark-900">
-            <Canvas>
-              <ambientLight intensity={0.2} />
-              <pointLight position={[5, 5, 5]} intensity={0.5} color="#e6b422" />
-              <Sphere args={[1, 64, 64]}>
-                <meshStandardMaterial wireframe color="#e6b422" emissive="#e6b422" emissiveIntensity={0.1} />
-              </Sphere>
-              <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.3} />
-            </Canvas>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+            <p className="text-gray-600 dark:text-gold-300/70 mt-1">Welcome back, {user?.full_name || user?.email}</p>
           </div>
+          <div className="flex gap-3 mt-4 sm:mt-0">
+            <Link to="/settings" className="btn-primary">Upgrade Plan</Link>
+            {user?.role === 'admin' && (
+              <Link to="/admin" className="px-4 py-2 border border-gray-300 dark:border-gold-500/30 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">Admin</Link>
+            )}
+          </div>
+        </div>
 
-          <div className="bg-dark-900 rounded-xl p-4 border border-gold-600/20">
-            <h3 className="text-lg font-bold text-gold-300 mb-4">IOC Distribution</h3>
-            <ResponsiveContainer width="100%" height={200}>
+        {/* Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {[
+            { label: 'Total IOCs', value: stats.total, icon: Activity, color: 'text-gold-500' },
+            { label: 'High/Critical', value: stats.high, icon: AlertTriangle, color: 'text-red-500' },
+            { label: 'Medium', value: stats.medium, icon: Zap, color: 'text-yellow-500' },
+            { label: 'Low', value: stats.low, icon: Shield, color: 'text-green-500' }
+          ].map((item, idx) => (
+            <motion.div key={idx} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }} className="card flex items-center gap-4">
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${item.color} bg-current/10`}>
+                <item.icon className={`w-5 h-5 ${item.color}`} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{item.value}</p>
+                <p className="text-sm text-gray-500 dark:text-gold-500/80">{item.label}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Charts & Table */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div className="card">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gold-300">IOC Distribution</h3>
+            <ResponsiveContainer width="100%" height={250}>
               <BarChart data={chartData}>
-                <XAxis dataKey="type" stroke="#c99c1a" />
-                <YAxis stroke="#c99c1a" />
-                <Tooltip contentStyle={{ backgroundColor: '#0d0d0d', border: '1px solid #e6b422' }} />
-                <Bar dataKey="count" fill="#e6b422" />
+                <XAxis dataKey="name" stroke="#888" />
+                <YAxis stroke="#888" />
+                <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#f5c542' }} />
+                <Bar dataKey="value" fill="#e6b422" radius={[4,4,0,0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
+          <div className="card flex flex-col justify-center items-center">
+            <Zap className="w-12 h-12 text-gold-500 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gold-300">Threat Map</h3>
+            <p className="text-gray-600 dark:text-gold-500/80 text-center">Geolocation view coming soon.<br/>Track attacks across Tunisian governorates.</p>
+          </div>
         </div>
 
-        <div className="bg-dark-900 rounded-xl p-6 border border-gold-600/20">
-          <h3 className="text-xl font-bold text-gold-300 mb-4">Recent Indicators</h3>
+        {/* IOC Table */}
+        <div className="card">
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gold-300">Recent Indicators</h3>
           {iocs.length === 0 ? (
-            <p className="text-gold-700">No indicators yet. Integrate a source to see data.</p>
+            <div className="text-center py-12 text-gray-500 dark:text-gold-600">
+              <AlertTriangle className="mx-auto mb-2 w-8 h-8" />
+              <p>No indicators yet. Add a threat feed to see live data.</p>
+            </div>
           ) : (
-            <ul className="space-y-2">
-              {iocs.map((ioc, idx) => (
-                <li key={idx} className="py-2 border-b border-gold-600/10 flex justify-between">
-                  <span className="text-gold-300">{ioc.value} <span className="text-gold-600">({ioc.type})</span></span>
-                  <span className="text-xs bg-dark-800 text-gold-400 px-2 py-0.5 rounded border border-gold-600/20">{ioc.threat_level}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="text-left text-sm text-gray-500 dark:text-gold-600 border-b dark:border-gold-500/10">
+                    <th className="pb-2">Value</th>
+                    <th className="pb-2">Type</th>
+                    <th className="pb-2">Source</th>
+                    <th className="pb-2">Threat</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y dark:divide-gold-500/10">
+                  {iocs.map((ioc, idx) => (
+                    <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
+                      <td className="py-3 font-mono text-sm">{ioc.value}</td>
+                      <td className="py-3 capitalize text-sm">{ioc.type}</td>
+                      <td className="py-3 text-sm">{ioc.source}</td>
+                      <td className="py-3">
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                          ioc.threat_level === 'high' || ioc.threat_level === 'critical' ? 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300' :
+                          ioc.threat_level === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300' :
+                          'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
+                        }`}>
+                          {ioc.threat_level}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
-      </main>
+      </div>
     </div>
   )
 }

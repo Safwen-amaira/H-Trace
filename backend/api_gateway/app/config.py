@@ -20,9 +20,14 @@ ALGORITHM = "HS256"
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379")
 
-# Rate limits: requests per minute
 RATE_LIMITS = {
     "free": 10,
     "pro": 60,
     "enterprise": 600
+}
+
+PLAN_SOURCES = {
+    "free": ["urlhaus"],
+    "pro": ["urlhaus", "abuseipdb"],
+    "enterprise": []  # empty means all sources; will be handled specially
 }

@@ -55,11 +55,13 @@ services:
       - elasticsearch
     networks:
       - htrace
+
   source_connector_service:
     build: ./backend/source_connector_service
     command: uvicorn app.main:app --host 0.0.0.0 --port 8003
+    env_file:
+      - .env
     environment:
-      THREAT_SOURCES: '{"openioc":"https://openioc.example.com/api","phishtank":"https://phishtank.example.com/api"}'
       THREAT_INTEL_SERVICE_URL: http://threat_intel_service:8002
       REDIS_URL: redis://redis:6379
     ports:
@@ -69,7 +71,7 @@ services:
       - redis
     networks:
       - htrace
-
+      
   api_gateway:
     build: ./backend/api_gateway
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000

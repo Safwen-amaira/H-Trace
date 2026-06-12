@@ -10,10 +10,13 @@ def create_ioc(db: Session, ioc):
     return db_ioc
 
 
-def get_iocs(db: Session, skip=0, limit=100, ioc_type=None):
+def get_iocs(db: Session, skip=0, limit=100, ioc_type=None, source=None):
     query = db.query(models.IOC)
     if ioc_type:
         query = query.filter(models.IOC.type == ioc_type)
+    if source:
+        sources = source.split(",")
+        query = query.filter(models.IOC.source.in_(sources))
     return query.offset(skip).limit(limit).all()
 
 

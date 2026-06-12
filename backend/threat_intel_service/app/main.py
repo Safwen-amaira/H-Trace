@@ -30,10 +30,11 @@ def read_iocs(
     skip: int = 0,
     limit: int = 100,
     ioc_type: Optional[str] = Query(None, alias="type"),
+    source: Optional[str] = Query(None),
     db=Depends(get_db)
 ):
     iocs = crud.get_iocs(
-        db, skip=skip, limit=limit, ioc_type=ioc_type
+        db, skip=skip, limit=limit, ioc_type=ioc_type, source=source
     )
     return iocs
 
@@ -41,3 +42,4 @@ def read_iocs(
 @app.get("/health")
 def health():
     return {"status": "ok"}
+    
